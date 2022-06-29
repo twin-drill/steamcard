@@ -1,0 +1,24 @@
+﻿https://www.steamcardexchange.net/api/request.php?GetBadgePrices_Member
+// almost the same as the foil badges, just prices are now std set and badge level ranges from 1-5
+
+"data": [
+    [
+      [
+        490390,
+        " 神明的一天世界-God&#039;s One Day World"
+      ],
+      5,
+      "$1.01",
+      0,
+      "1611804782"
+    ],
+    [
+      [
+        603750,
+        "- Arcane Raise -"
+      ],
+      5,
+      "$0.88",
+      0,
+      "1611816863"
+    ],
