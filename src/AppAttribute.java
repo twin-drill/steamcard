@@ -1,3 +1,3 @@
-public enum AppAttributes {
+public enum AppAttribute {
     ID, NAME, NUM_CARDS, BOOSTER_PRICE, BOOSTER_RATIO, THREE_CARD, GEM_RATIO, GEM_PRICE, CARD_PRICE, FOIL_PRICE, LAST_UPDATED
 }

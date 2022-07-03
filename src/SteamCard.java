@@ -1,23 +1,24 @@
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SteamCard {
 
-    private static ArrayList<SteamApp> apps;
+    private static HashMap<Integer, SteamApp> apps;
 
     public static void main(String[] args) {
-        readCache();
-        System.out.println(apps);
-    }
-
-    public static void createCache() {
-        Connection booster = new Connection("https://www.steamcardexchange.net/api/request.php?GetBoosterPrices");
-        Parser parser = new Parser();
-        booster.open();
-        apps = parser.createBoosterDict(booster.get());
-        booster.close();
-        Cache.buildCache(apps);
-    }
-    public static void readCache() {
         apps = Cache.readCache();
+        apps.forEach((a,b) -> System.out.println(b));
+    }
+    public static void createFullCache() {
+        Parser p = new Parser();
+        Connection[] c = new Connection[] {
+                new Connection("https://www.steamcardexchange.net/api/request.php?GetBoosterPrices"),
+                new Connection("https://www.steamcardexchange.net/api/request.php?GetFoilBadgePrices_Member"),
+                new Connection("https://www.steamcardexchange.net/api/request.php?GetBadgePrices_Member") };
+
+        for (Connection conn : c) { conn.open();}
+        apps = p.parseAll(c[0].get(), c[1].get(), c[2].get());
+        for (Connection conn : c) { conn.close();}
+
+        Cache.buildCache(apps);
     }
 }
