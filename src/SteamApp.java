@@ -1,72 +1,120 @@
+import java.util.ArrayList;
 import java.io.Serializable;
 
 public class SteamApp implements Serializable {
 
-    public int id = -1;
+    public int id;
     public String name = "";
-    public int numCards = -1;
-    public double boosterPrice = -1;
-    public int boosterRatio = -1;
-    public double threeCard = -1;
-    public int gemRatio = -1;
-    public double gemPrice = -1;
-    public double cardPrice = -1;
-    public double foilCardPrice = -1;
-    public long lastUpdated;
+    public int numCards = 0;
+    public double boosterPrice = 0;
+    public int boosterRatio = 0;
+    public double threeCard = 0;
+    public int gemRatio = 0;
+    public double gemPrice = 0;
+    public double cardPrice = 0;
+    public double foilCardPrice = 0;
+    public long lastUpdated = 0;
+    public ArrayList<SteamAppPropertyDiffCollection> updateHistory = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return "id : " + id;
+    public SteamApp(SteamAppUpdate pack) {
+        this.id = pack.id;
+        update(pack);
     }
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof SteamApp)) return false;
-        return ((SteamApp) other).id == this.id;
+        if (other instanceof SteamApp) {
+            return ((SteamApp) other).id == this.id;
+        }
+        if (other instanceof SteamAppUpdate) {
+            return ((SteamAppUpdate) other).id == this.id;
+        }
+        return false;
     }
 
-    public void update(SteamApp newApp) {
-        boolean newer = this.lastUpdated < newApp.lastUpdated;
+    public void update(SteamAppUpdate update) {
+        ArrayList<SteamAppPropertyDiff> diffs = new ArrayList<>();
+        SteamAppPropertyDiffCollection coll = null;
+        SteamAppPropertyDiff temp;
 
-        if (name.isBlank() || (newer && !newApp.name.isBlank())) {
-            this.name = newApp.name;
+        for (SteamAppProperty p : update.properties) {
+            if (p.specifier == SteamAppAttribute.LAST_UPDATED) {
+                if (lastUpdated < (long) p.value) {
+                    coll = new SteamAppPropertyDiffCollection((long) p.value);
+                }
+                else { return; }
+            }
         }
 
-        if (numCards == -1 || (newer && newApp.numCards != -1)) {
-            this.numCards = newApp.numCards;
+        for (SteamAppProperty property : update.properties) {
+            temp = new SteamAppPropertyDiff(property.specifier);
+            temp.setCurr(property.value);
+            switch(property.specifier) {
+                case NAME:
+                    if (!property.value.equals(this.name)) {
+                        temp.setOld(this.name);
+                        this.name = (String) property.value;
+                    }
+                    break;
+                case NUM_CARDS:
+                    if (this.numCards != (int) property.value) {
+                        temp.setOld(this.numCards);
+                        this.numCards = (int) property.value;
+                    }
+                    break;
+                case BOOSTER_PRICE:
+                    if (this.boosterPrice != (double) property.value) {
+                        temp.setOld(this.boosterPrice);
+                        this.boosterPrice = (double) property.value;
+                    }
+                    break;
+                case BOOSTER_RATIO:
+                    if (this.boosterRatio != (int) property.value) {
+                        temp.setOld(this.boosterRatio);
+                        this.boosterRatio = (int) property.value;
+                    }
+                    break;
+                case THREE_CARD:
+                    if (this.threeCard != (double) property.value) {
+                        temp.setOld(this.threeCard);
+                        this.threeCard = (double) property.value;
+                    }
+                    break;
+                case GEM_PRICE:
+                    if (this.gemPrice != (double) property.value) {
+                        temp.setOld(this.gemPrice);
+                        this.gemPrice = (double) property.value;
+                    }
+                    break;
+                case GEM_RATIO:
+                    if (this.gemRatio != (int) property.value) {
+                        temp.setOld(this.gemRatio);
+                        this.gemRatio = (int) property.value;
+                    }
+                    break;
+                case CARD_PRICE:
+                    if (this.cardPrice != (double) property.value) {
+                        temp.setOld(this.cardPrice);
+                        this.cardPrice = (double) property.value;
+                    }
+                    break;
+                case FOIL_PRICE:
+                    if (this.foilCardPrice != (double) property.value) {
+                        temp.setOld(this.foilCardPrice);
+                        this.foilCardPrice = (double) property.value;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (temp.old != null) {
+                diffs.add(temp);
+            }
         }
 
-        if (boosterPrice == -1 || (newer && newApp.boosterPrice != -1)) {
-            this.boosterPrice = newApp.boosterPrice;
-        }
-
-        if (boosterRatio == -1 || (newer && newApp.boosterRatio != -1)) {
-            this.boosterRatio = newApp.boosterRatio;
-        }
-
-        if (threeCard == -1 || (newer && newApp.threeCard != -1)) {
-            this.threeCard = newApp.threeCard;
-        }
-
-        if (gemRatio == -1 || (newer && newApp.gemRatio != -1)) {
-            this.gemRatio = newApp.gemRatio;
-        }
-
-        if (gemPrice == -1 || (newer && newApp.gemPrice != -1)) {
-            this.gemPrice = newApp.gemPrice;
-        }
-
-        if (foilCardPrice == -1 || (newer && newApp.foilCardPrice != -1)) {
-            this.foilCardPrice = newApp.foilCardPrice;
-        }
-
-        if (cardPrice == -1 || (newer && newApp.cardPrice != -1)) {
-            this.cardPrice = newApp.cardPrice;
-        }
-
-        if (newer) {
-            this.lastUpdated = newApp.lastUpdated;
-        }
+        coll.setDiffs(diffs.toArray(new SteamAppPropertyDiff[0]));
+        updateHistory.add(0, coll);
     }
 
 }

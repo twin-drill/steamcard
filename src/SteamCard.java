@@ -5,8 +5,7 @@ public class SteamCard {
     private static HashMap<Integer, SteamApp> apps;
 
     public static void main(String[] args) {
-        apps = Cache.readCache();
-        apps.forEach((a,b) -> System.out.println(b));
+
     }
     public static void createFullCache() {
         Parser p = new Parser();
