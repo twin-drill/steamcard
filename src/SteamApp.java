@@ -7,7 +7,7 @@ public class SteamApp implements Serializable {
     public String name = "";
     public int numCards = 0;
     public double boosterPrice = 0;
-    public int boosterRatio = 0;
+    public int threeCardRatio = 0;
     public double threeCard = 0;
     public int gemRatio = 0;
     public double gemPrice = 0;
@@ -30,6 +30,19 @@ public class SteamApp implements Serializable {
             return ((SteamAppUpdate) other).id == this.id;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "\\ ID: " + id +
+                "\n\\ Name: " + name +
+                "\n\\\n\\ Number of Cards: " + numCards +
+                "\n\\\n\\ Booster Price: $" + boosterPrice +
+                "\n\\\tMarket Average for 3 Cards: $" + threeCard + " (" + String.format("%.2f", ((threeCard / boosterPrice) * 100)) + "%)" +
+                "\n\\\tGem Price for Booster: $" + gemPrice + " (" + String.format("%.2f", ((gemPrice / boosterPrice) * 100)) + "%)" +
+                "\n\\\n\\ Price for 5 Cards: $" + cardPrice +
+                "\n\\ Price for 5 Foil Cards: $" + foilCardPrice +
+                "\n\\ Last Updated: " + lastUpdated;
     }
 
     public void update(SteamAppUpdate update) {
@@ -68,10 +81,10 @@ public class SteamApp implements Serializable {
                         this.boosterPrice = (double) property.value;
                     }
                     break;
-                case BOOSTER_RATIO:
-                    if (this.boosterRatio != (int) property.value) {
-                        temp.setOld(this.boosterRatio);
-                        this.boosterRatio = (int) property.value;
+                case THREE_CARD_RATIO:
+                    if (this.threeCardRatio != (int) property.value) {
+                        temp.setOld(this.threeCardRatio);
+                        this.threeCardRatio = (int) property.value;
                     }
                     break;
                 case THREE_CARD:

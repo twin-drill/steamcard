@@ -34,7 +34,7 @@ public class Parser {
                 add(new SteamAppProperty<String>(SteamAppAttribute.NAME));
                 add(new SteamAppProperty<Integer>(SteamAppAttribute.NUM_CARDS));
                 add(new SteamAppProperty<Double>(SteamAppAttribute.BOOSTER_PRICE));
-                add(new SteamAppProperty<Integer>(SteamAppAttribute.BOOSTER_RATIO));
+                add(new SteamAppProperty<Integer>(SteamAppAttribute.THREE_CARD_RATIO));
                 add(new SteamAppProperty<Double>(SteamAppAttribute.THREE_CARD));
                 add(new SteamAppProperty<Integer>(SteamAppAttribute.GEM_RATIO));
                 add(new SteamAppProperty<Double>(SteamAppAttribute.GEM_PRICE));

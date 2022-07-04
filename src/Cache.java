@@ -3,6 +3,7 @@ import java.util.HashMap;
 
 public class Cache {
     public static void buildCache(HashMap<Integer, SteamApp> map) {
+        System.out.println("\t \\ Building Cache...");
         try {
             FileOutputStream fos = new FileOutputStream("cache.dat");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -16,6 +17,7 @@ public class Cache {
 
     }
     public static HashMap<Integer, SteamApp> readCache() {
+        System.out.println("\t\\ Building Map...");
         try {
             FileInputStream fileInputStream = new FileInputStream("cache.dat");
             ObjectInputStream ois = new ObjectInputStream(fileInputStream);
