@@ -2,18 +2,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Scanner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Parser {
+
+    private static final Logger log = LogManager.getLogger("Parser");
+
     private HashMap<Integer, SteamApp> apps;
 
     public Parser() {
+        log.trace("parser instantiated");
         apps = new HashMap<>();
-    }
-    public HashMap<Integer, SteamApp> getMap() {
-        return apps;
     }
 
     public HashMap<Integer, SteamApp> parseAll(String boosterData, String foilData, String badgeData) {
+        log.trace("Parsing All");
         updateBoosterDict(boosterData);
         updateValues(foilData, SteamAppAttribute.FOIL_PRICE);
         updateValues(badgeData, SteamAppAttribute.CARD_PRICE);
@@ -22,6 +26,7 @@ public class Parser {
 
     @SuppressWarnings("unchecked")
     public void updateBoosterDict(String data) {
+        log.trace("Parsing booster api values");
         SteamAppUpdate temp;
         Scanner s = new Scanner(data).useLocale(Locale.US);
         ArrayList<SteamAppProperty> properties;
@@ -72,12 +77,12 @@ public class Parser {
             else {
                 apps.put(temp.id, new SteamApp(temp));
             }
-
             s.next();
         }
     }
 
     public void updateValues(String data, SteamAppAttribute toGet) {
+        log.trace("Parsing for " + toGet.name());
         SteamAppUpdate temp;
         SteamAppProperty<Double> p;
         SteamAppProperty<Long> u;

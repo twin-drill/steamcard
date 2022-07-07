@@ -23,4 +23,13 @@ public class SteamAppPropertyDiffCollection implements Serializable {
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }
+
+    @Override
+    public String toString() {
+        String f = "Change at " + updateTime + "\n\t";
+        for (SteamAppPropertyDiff diff : diffs) {
+            f += diff.toString() + "\n\t";
+        }
+        return f.trim();
+    }
 }

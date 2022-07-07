@@ -25,4 +25,9 @@ public class SteamAppPropertyDiff implements Serializable {
     public void setSpecifier(SteamAppAttribute specifier) {
         this.specifier = specifier;
     }
+
+    @Override
+    public String toString() {
+        return this.specifier.name() + ": " + old.toString() + " » " + curr.toString();
+    }
 }
