@@ -2,6 +2,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.util.ArrayList;
 
 public class Dataset {
 
@@ -11,6 +12,16 @@ public class Dataset {
 
     public Dataset() {
         apps = new HashMap<>();
+    }
+
+    public SearchResult[] nameSearch(String query) {
+        ArrayList<SearchResult> results = new ArrayList<>();
+        apps.forEach((a, b) -> {
+            if (b.name.toLowerCase().contains(query)) {
+                results.add(new SearchResult(b));
+            }
+        });
+        return results.toArray(new SearchResult[0]);
     }
 
     public void save() {

@@ -32,8 +32,7 @@ public class TextInterface {
 
             case 1:
                 log.trace("searching");
-                out.outi("- Enter AppID");
-                out.outb(data.apps.get(s.nextInt()).toString());
+                search();
                 break;
 
 
@@ -56,9 +55,31 @@ public class TextInterface {
         mainloop();
     }
 
+    public static void search() {
 
+        out.outi(".Find 1 Lookup by AppID" +
+                "\n2 Search by Name" +
+                "\n3 Back");
 
+        switch(s.nextInt()) {
+            case 1:
+                out.outi("- Enter AppID");
+                out.outb(data.apps.get(s.nextInt()).toString());
+                break;
+            case 2:
+                out.outi("- Enter search query");
+                s.nextLine();
+                SearchResult[] results = data.nameSearch(s.nextLine().trim().toLowerCase());
+                for (SearchResult sr : results) {
+                    out.outb(sr.toString());
+                }
+                search();
+                break;
 
-
+            case 3:
+            default:
+                break;
+        }
+    }
 
 }
