@@ -1,3 +1,4 @@
+import java.time.Instant;
 import java.util.ArrayList;
 import java.io.Serializable;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +18,7 @@ public class SteamApp implements Serializable {
     public double gemPrice = 0;
     public double cardPrice = 0;
     public double foilCardPrice = 0;
-    public long lastUpdated = 0;
+    public Instant lastUpdated = Instant.MIN;
     public ArrayList<SteamAppPropertyDiffCollection> updateHistory = new ArrayList<>();
 
     public SteamApp(SteamAppUpdate pack) {
@@ -39,16 +40,34 @@ public class SteamApp implements Serializable {
 
     @Override
     public String toString() {
+        return "<SteamApp " + id + ">";
+    }
+
+    private String f2f(double s) {
+        return String.format("%.2f", s);
+    }
+
+    public String consoleString() {
         return "ID: " + id +
-                "\nName: " + name +
-                "\n\nNumber of Cards: " + numCards +
-                "\n\nBooster Price: $" + boosterPrice +
-                "\n\tMarket Average for 3 Cards: $" + threeCard + " (" + String.format("%.2f", ((threeCard / boosterPrice) * 100)) + "%)" +
-                "\n\tGem Price for Booster: $" + gemPrice + " (" + String.format("%.2f", ((gemPrice / boosterPrice) * 100)) + "%)" +
-                "\n\n Price for 5 Cards: $" + cardPrice +
-                "\nPrice for 5 Foil Cards: $" + foilCardPrice +
-                "\nLast Updated: " + lastUpdated +
-                "\n\nChangelog:\n" + updateHistory.toString().replaceAll("\\[|]", "").replaceAll(", ", "\n");
+            "\nName: " + name +
+            "\n\nNumber of Cards: " + numCards +
+            "\n\nBooster Price: $" + boosterPrice +
+            "\n\tMarket Average for 3 Cards: $" + f2f(threeCard) + " (" + f2f((threeCard / boosterPrice) * 100) + "%)" +
+            "\n\tGem Price for Booster: $" + f2f(gemPrice) + " (" + f2f((gemPrice / boosterPrice) * 100) + "%)" +
+            "\n\n Price for 5 Cards: $" + f2f(cardPrice) +
+            "\nPrice for 5 Foil Cards: $" + f2f(foilCardPrice) +
+            "\nLast Updated: " + lastUpdated;
+    }
+
+    public String flatString() {
+        return name + " (" + id + ")" +
+            "\n\nNumber of Cards: " + numCards +
+            "\n\nBooster Price: $" + boosterPrice +
+            "\n  vs. Average for 3 cards: \n\t$" + f2f(threeCard) + " (" + f2f((threeCard / boosterPrice) * 100) + "%)" +
+            "\n  vs. Gem Price for Booster: \n\t$" + f2f(gemPrice) + " (" + f2f((gemPrice / boosterPrice) * 100) + "%)" +
+            "\n\nPrice for 5 Cards: $" + f2f(cardPrice) +
+            "\nPrice for 5 Foil Cards: $" + f2f(foilCardPrice) +
+            "\n\nLast Update:\n  " + lastUpdated;
     }
 
     public void update(SteamAppUpdate update) {
@@ -124,8 +143,9 @@ public class SteamApp implements Serializable {
                     }
                     break;
                 case LAST_UPDATED:
-                        if (this.lastUpdated < (long) property.value) {
-                            this.lastUpdated = (long) property.value;
+                    Instant i = Instant.ofEpochSecond((long) property.value);
+                        if (this.lastUpdated.isBefore(i)) {
+                            this.lastUpdated = i;
                         }
                         break;
                 default:

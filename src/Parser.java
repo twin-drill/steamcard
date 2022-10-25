@@ -55,7 +55,7 @@ public class Parser {
             // Parse data, throw away midsegments
             temp = new SteamAppUpdate(s.nextInt());
             s.next();
-            properties.get(0).setValue(s.next());
+            properties.get(0).setValue(makeString(s.next()));
             s.next();
             properties.get(1).setValue(s.nextInt());
             s.next();
@@ -113,5 +113,36 @@ public class Parser {
                 apps.put(temp.id, new SteamApp(temp));
             }
         }
+    }
+
+    private String makeString(String s) {
+        s = s.replaceAll("&#039;", "'")
+            .replaceAll("&quot;", "\"")
+            .replaceAll("&lt;", "<")
+            .replaceAll("&gt;", ">")
+            .replaceAll("&amp;", "&");
+        int i = 0;
+        String s1, s2;
+        char sx;
+        while (i < s.length() - 1) {
+            if (s.charAt(i) != '\\') {
+                ++i;
+                continue;
+            }
+            if (s.charAt(i + 1) == 'u') {
+                try {
+                    s1 = s.substring(0, i);
+                    s2 = s.substring(i + 6);
+                    sx = (char) Integer.parseInt(s.substring(i + 2, i + 6), 16);
+                    s = s1 + sx + s2;
+                }
+                catch(IndexOutOfBoundsException e) {
+                    continue;
+                }
+            }
+            ++i;
+        }
+
+        return s;
     }
 }

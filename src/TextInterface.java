@@ -1,6 +1,7 @@
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class TextInterface {
@@ -69,7 +70,7 @@ public class TextInterface {
             case 2:
                 out.outi("- Enter search query");
                 s.nextLine();
-                SearchResult[] results = data.nameSearch(s.nextLine().trim().toLowerCase());
+                List<SearchResult> results = data.nameSearch(s.nextLine().trim().toLowerCase());
                 for (SearchResult sr : results) {
                     out.outb(sr.toString());
                 }

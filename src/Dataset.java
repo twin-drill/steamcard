@@ -3,6 +3,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Dataset {
 
@@ -14,14 +15,14 @@ public class Dataset {
         apps = new HashMap<>();
     }
 
-    public SearchResult[] nameSearch(String query) {
+    public List<SearchResult> nameSearch(String query) {
         ArrayList<SearchResult> results = new ArrayList<>();
         apps.forEach((a, b) -> {
             if (b.name.toLowerCase().contains(query)) {
                 results.add(new SearchResult(b));
             }
         });
-        return results.toArray(new SearchResult[0]);
+        return results;
     }
 
     public void save() {
@@ -52,5 +53,9 @@ public class Dataset {
         catch(FileNotFoundException e) {
             out.outb("cannot find cache file. aborting...");
         }
+    }
+
+    public int size() {
+        return apps.size();
     }
 }

@@ -1,6 +1,24 @@
 public class SearchResult {
-    public String name;
-    public int id;
+
+
+    private String name;
+    private int id;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 
     public SearchResult(SteamApp app) {
         this.name = app.name;
