@@ -17,6 +17,10 @@ public class SteamAppPropertyDiffCollection implements Serializable {
     }
 
     public void setDiffs(SteamAppPropertyDiff[] diffs) {
+        if (diffs == null) {
+            this.diffs = new SteamAppPropertyDiff[0];
+            return;
+        }
         this.diffs = diffs;
     }
 

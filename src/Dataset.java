@@ -1,9 +1,8 @@
 import java.io.FileNotFoundException;
-import java.util.HashMap;
+import java.util.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Dataset {
 
@@ -25,6 +24,33 @@ public class Dataset {
         return results;
     }
 
+    public List<SearchResult> threeCardSort(boolean low) {
+        ArrayList<SearchResult> results = new ArrayList<>();
+        ArrayList<SteamApp> sortable = new ArrayList<>(apps.values());
+        sortable.sort(Comparator.comparingInt(a -> a.threeCardRatio));
+        if (!low) Collections.reverse(sortable);
+        sortable.forEach(a -> results.add(new SearchResult(a)));
+        return results;
+    }
+
+    public List<SearchResult> gemSort(boolean low) {
+        ArrayList<SearchResult> results = new ArrayList<>();
+        ArrayList<SteamApp> sortable = new ArrayList<>(apps.values());
+        sortable.sort(Comparator.comparingInt(a -> a.gemRatio));
+        if (low) Collections.reverse(sortable);
+        sortable.forEach(a -> results.add(new SearchResult(a)));
+        return results;
+    }
+
+    public List<SearchResult> boosterSort(boolean low) {
+        ArrayList<SearchResult> results = new ArrayList<>();
+        ArrayList<SteamApp> sortable = new ArrayList<>(apps.values());
+        sortable.sort(Comparator.comparingInt(a -> a.gemRatio + a.threeCardRatio));
+        if (!low) Collections.reverse(sortable);
+        sortable.forEach(a -> results.add(new SearchResult(a)));
+        return results;
+    }
+
     public void save() {
         Cache.buildCache(apps);
         log.debug("Cache saved");
@@ -32,7 +58,7 @@ public class Dataset {
 
     public void fetch() {
         log.trace("fetching data");
-        Parser p = new Parser();
+        Parser p = load_silent() ? new Parser(apps) : new Parser();
         Connection[] c = new Connection[] {
                 new Connection("https://www.steamcardexchange.net/api/request.php?GetBoosterPrices"),
                 new Connection("https://www.steamcardexchange.net/api/request.php?GetFoilBadgePrices_Member"),
@@ -44,6 +70,16 @@ public class Dataset {
         save();
     }
 
+    public boolean load_silent() {
+        log.trace("silent load");
+        try {
+            apps = Cache.readCache();
+            return true;
+        }
+        catch(FileNotFoundException e) {
+            return false;
+        }
+    }
 
     public void load() {
         log.trace("loading data");

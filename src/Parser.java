@@ -16,6 +16,11 @@ public class Parser {
         apps = new HashMap<>();
     }
 
+    public Parser(HashMap<Integer, SteamApp> apps) {
+        log.trace("parser instantiated with preset apps.");
+        this.apps = apps;
+    }
+
     public HashMap<Integer, SteamApp> parseAll(String boosterData, String foilData, String badgeData) {
         log.trace("Parsing All");
         updateBoosterDict(boosterData);

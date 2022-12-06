@@ -1,6 +1,4 @@
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -39,11 +37,11 @@ public class GUI extends Application {
 
         BorderPane top = new BorderPane();
         top.prefWidthProperty().bind(bp.widthProperty());
-        BorderPane middle = new BorderPane();
-        middle.prefWidthProperty().bind(bp.widthProperty());
-        BorderPane bottom = new BorderPane();
-        bottom.prefWidthProperty().bind(bp.widthProperty());
-        bottom.prefHeightProperty().bind(bp.heightProperty().multiply(0.5));
+        BorderPane bot = new BorderPane();
+        bot.prefWidthProperty().bind(bp.widthProperty());
+        BorderPane mid = new BorderPane();
+        mid.prefWidthProperty().bind(bp.widthProperty());
+        mid.prefHeightProperty().bind(bp.heightProperty().multiply(0.5));
 
         Label dataLabel = new Label(data.size() + " apps loaded.");
         Button[] dataButtons = new Button[] {
@@ -64,8 +62,20 @@ public class GUI extends Application {
         searchBarBox.setSpacing(5);
         VBox searchBox = new VBox(searchBarLabel, searchBarBox);
 
+        Label sortLabel = new Label("Sort by ");
+        ChoiceBox<String> sortDirectionChoice = new ChoiceBox<>(FXCollections.observableArrayList("best", "worst"));
+        ChoiceBox<String> sortChoice = new ChoiceBox<>(FXCollections.observableArrayList("booster", "three card avg", "gem"));
+        Label sortLabel2 = new Label(" ratios.");
+        Button sortButton = new Button("Sort");
+
+        HBox sortButtons = new HBox(sortLabel, sortDirectionChoice, sortChoice, sortLabel2);
+        HBox sortButtonsBox = new HBox(sortButtons, sortButton);
+        sortButtonsBox.setSpacing(5);
+        VBox trBox = new VBox(searchBox, sortButtonsBox);
+        trBox.setSpacing(5);
+
         top.setRight(dataset);
-        top.setLeft(searchBox);
+        top.setLeft(trBox);
 
         Label searchNumbers = new Label();
         searchNumbers.setAlignment(Pos.TOP_LEFT);
@@ -73,8 +83,8 @@ public class GUI extends Application {
         TextArea searchResult = new TextArea();
         searchResult.setWrapText(true);
         searchResult.setEditable(false);
-        searchResult.prefWidthProperty().bind(bottom.widthProperty().multiply(0.35));
-        searchResults.prefWidthProperty().bind(bottom.widthProperty().multiply(0.65));
+        searchResult.prefWidthProperty().bind(mid.widthProperty().multiply(0.35));
+        searchResults.prefWidthProperty().bind(mid.widthProperty().multiply(0.65));
         searchResults.setEditable(false);
         searchResults.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -85,13 +95,27 @@ public class GUI extends Application {
         idColumn.setMaxWidth(1000);
         searchResults.getColumns().addAll(idColumn, nameColumn);
 
-        bottom.setTop(searchNumbers);
-        bottom.setLeft(searchResults);
-        bottom.setRight(searchResult);
+        mid.setTop(searchNumbers);
+        mid.setLeft(searchResults);
+        mid.setRight(searchResult);
 
         // actionevents (put here for context granted from creation of ui)
-        dataButtons[0].setOnAction(actionEvent -> { data.load(); dataLabel.setText(data.size() + " apps loaded."); });
-        dataButtons[1].setOnAction(actionEvent -> { data.fetch(); dataLabel.setText(data.size() + " apps loaded."); });
+        dataButtons[0].setOnAction(actionEvent -> {
+            dataButtons[0].setDisable(true);
+            dataButtons[1].setDisable(true);
+            data.load();
+            dataLabel.setText(data.size() + " apps loaded.");
+            dataButtons[0].setDisable(false);
+            dataButtons[1].setDisable(false);
+        });
+        dataButtons[1].setOnAction(actionEvent -> {
+            dataButtons[0].setDisable(true);
+            dataButtons[1].setDisable(true);
+            data.fetch();
+            dataLabel.setText(data.size() + " apps loaded.");
+            dataButtons[0].setDisable(false);
+            dataButtons[1].setDisable(false);
+        });
         searchGoButton.setOnAction(actionEvent -> {
             String searchText = searchBar.getText();
             if (searchText.length() != 0) {
@@ -99,6 +123,28 @@ public class GUI extends Application {
                 searchResults.scrollTo(0);
                 searchResults.setItems(a);
                 searchNumbers.setText(a.size() + " items found.");
+            }
+        });
+        sortButton.setOnAction(actionEvent -> {
+            boolean searchDir = sortDirectionChoice.getValue() != "best";
+            String selSort = sortChoice.getValue();
+            ObservableList<SearchResult> a;
+            switch(selSort) {
+                case "booster":
+                    a = FXCollections.observableArrayList(data.boosterSort(searchDir));
+                    searchResults.scrollTo(0);
+                    searchResults.setItems(a);
+                    break;
+                case "gem":
+                    a = FXCollections.observableArrayList(data.gemSort(searchDir));
+                    searchResults.scrollTo(0);
+                    searchResults.setItems(a);
+                    break;
+                case "three card avg":
+                    a = FXCollections.observableArrayList(data.threeCardSort(searchDir));
+                    searchResults.scrollTo(0);
+                    searchResults.setItems(a);
+                    break;
             }
         });
         searchResults.getSelectionModel().selectedItemProperty().addListener(
@@ -111,8 +157,8 @@ public class GUI extends Application {
 
         // box organization
         bp.setTop(top);
-        bp.setCenter(middle);
-        bp.setBottom(bottom);
+        bp.setCenter(mid);
+        bp.setBottom(bot);
 
         group.getChildren().add(bp);
 

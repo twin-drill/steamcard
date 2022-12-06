@@ -40,7 +40,7 @@ public class SteamApp implements Serializable {
 
     @Override
     public String toString() {
-        return "<SteamApp " + id + ">";
+        return "<SteamApp " + id + "@" + lastUpdated + ">";
     }
 
     private String f2f(double s) {
@@ -52,7 +52,7 @@ public class SteamApp implements Serializable {
             "\nName: " + name +
             "\n\nNumber of Cards: " + numCards +
             "\n\nBooster Price: $" + boosterPrice +
-            "\n\tMarket Average for 3 Cards: $" + f2f(threeCard) + " (" + f2f((threeCard / boosterPrice) * 100) + "%)" +
+            "\n\tMarket Average for 3 Cards: $" + f2f(threeCard) + " (" + f2f((threeCard / boosterPrice) * 100) + "%) <" +
             "\n\tGem Price for Booster: $" + f2f(gemPrice) + " (" + f2f((gemPrice / boosterPrice) * 100) + "%)" +
             "\n\n Price for 5 Cards: $" + f2f(cardPrice) +
             "\nPrice for 5 Foil Cards: $" + f2f(foilCardPrice) +
