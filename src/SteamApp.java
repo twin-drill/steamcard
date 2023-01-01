@@ -1,6 +1,7 @@
 import java.time.Instant;
 import java.util.ArrayList;
 import java.io.Serializable;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,6 +37,18 @@ public class SteamApp implements Serializable {
             return ((SteamAppUpdate) other).id == this.id;
         }
         return false;
+    }
+
+    public ArrayList<Object[]> getNumericHistory(SteamAppAttribute attr) {
+        ArrayList<Object[]> al = new ArrayList<>();
+        for (SteamAppPropertyDiffCollection coll : updateHistory) {
+            for (SteamAppPropertyDiff diff : coll.diffs) {
+                if (diff.specifier == attr) {
+                    al.add(new Object[] {diff.curr, coll.updateTime});
+                }
+            }
+        }
+        return al;
     }
 
     @Override

@@ -18,18 +18,15 @@ public class Cache {
             throw new RuntimeException(e);
         }
         log.info("Created Cache, Loaded Data.");
-        out.outb("cache created successfully, data loaded.");
     }
     public static HashMap<Integer, SteamApp> readCache() throws FileNotFoundException {
         log.trace("Reading Cache");
-        out.outb("building map...");
         FileInputStream fileInputStream = new FileInputStream("cache.dat");
         try {
             ObjectInputStream ois = new ObjectInputStream(fileInputStream);
             HashMap<Integer, SteamApp> apps = (HashMap<Integer, SteamApp>) ois.readObject();
             ois.close();
             fileInputStream.close();
-            out.outb("data loaded.");
             log.info("Loaded Data from Cache.");
             return apps;
         } catch (IOException | ClassNotFoundException e) {

@@ -1,6 +1,9 @@
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -13,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.util.ArrayList;
 
 public class GUI extends Application {
 
@@ -99,6 +103,24 @@ public class GUI extends Application {
         mid.setLeft(searchResults);
         mid.setRight(searchResult);
 
+        final NumberAxis X = new NumberAxis();
+        final NumberAxis Y = new NumberAxis();
+        X.setForceZeroInRange(false);
+        Y.setForceZeroInRange(false);
+
+        X.setLabel("time");
+        final LineChart histChart = new LineChart(X, Y);
+        histChart.setAnimated(false);
+
+        Button chartButton = new Button("display");
+        ChoiceBox<String> attrChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Number of Cards", "Booster Price", "Three Card Price", "Three Card Ratio",
+                "Gem Price", "Gem Ratio", "Card Price", "Foil Card Price"));
+
+        HBox chartHeader = new HBox(attrChoiceBox, chartButton);
+        bot.setTop(chartHeader);
+        bot.setCenter(histChart);
+
+
         // actionevents (put here for context granted from creation of ui)
         dataButtons[0].setOnAction(actionEvent -> {
             dataButtons[0].setDisable(true);
@@ -132,20 +154,18 @@ public class GUI extends Application {
             switch(selSort) {
                 case "booster":
                     a = FXCollections.observableArrayList(data.boosterSort(searchDir));
-                    searchResults.scrollTo(0);
-                    searchResults.setItems(a);
                     break;
                 case "gem":
                     a = FXCollections.observableArrayList(data.gemSort(searchDir));
-                    searchResults.scrollTo(0);
-                    searchResults.setItems(a);
                     break;
                 case "three card avg":
                     a = FXCollections.observableArrayList(data.threeCardSort(searchDir));
-                    searchResults.scrollTo(0);
-                    searchResults.setItems(a);
                     break;
+                default:
+                    a = FXCollections.observableArrayList();
             }
+            searchResults.scrollTo(0);
+            searchResults.setItems(a);
         });
         searchResults.getSelectionModel().selectedItemProperty().addListener(
             (observableValue, sr, t1) -> {
@@ -153,6 +173,51 @@ public class GUI extends Application {
                     searchResult.setText(data.apps.get(t1.getId()).flatString());
                 }
             });
+
+        chartButton.setOnAction(actionEvent -> {
+            SteamAppAttribute attr;
+            String t = attrChoiceBox.getValue();
+            XYChart.Series series = new XYChart.Series();
+            histChart.getData().clear();
+            switch(t) {
+                case "Number of Cards":
+                    attr = SteamAppAttribute.NUM_CARDS;
+                    break;
+                case "Booster Price":
+                    attr = SteamAppAttribute.BOOSTER_PRICE;
+                    break;
+                case "Three Card Price":
+                    attr = SteamAppAttribute.THREE_CARD;
+                    break;
+                case "Three Card Ratio":
+                    attr = SteamAppAttribute.THREE_CARD_RATIO;
+                    break;
+                case "Gem Price":
+                    attr = SteamAppAttribute.GEM_PRICE;
+                    break;
+                case "Gem Ratio":
+                    attr = SteamAppAttribute.GEM_RATIO;
+                    break;
+                case "Card Price":
+                    attr = SteamAppAttribute.CARD_PRICE;
+                    break;
+                case "Foil Card Price":
+                    attr = SteamAppAttribute.FOIL_PRICE;
+                    break;
+                default:
+                    attr = SteamAppAttribute.ID;
+                    break;
+            }
+
+            SteamApp selected = data.apps.get(searchResults.getSelectionModel().getSelectedItem().getId());
+            ArrayList<Object[]> histData = selected.getNumericHistory(attr);
+
+            for (Object[] point : histData) {
+                series.getData().add(new XYChart.Data(point[1], point[0]));
+            }
+            histChart.getData().add(series);
+            histChart.setTitle(t + " update history (" + selected.id + ")");
+        });
 
 
         // box organization
