@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -76,7 +77,7 @@ public class Dataset {
             apps = Cache.readCache();
             return true;
         }
-        catch(FileNotFoundException e) {
+        catch(IOException e) {
             return false;
         }
     }
@@ -86,8 +87,8 @@ public class Dataset {
         try {
             apps = Cache.readCache();
         }
-        catch(FileNotFoundException e) {
-            out.outb("cannot find cache file. aborting...");
+        catch(IOException e) {
+            out.outb("error while reading cache. aborting...");
         }
     }
 

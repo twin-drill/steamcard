@@ -19,7 +19,7 @@ public class Cache {
         }
         log.info("Created Cache, Loaded Data.");
     }
-    public static HashMap<Integer, SteamApp> readCache() throws FileNotFoundException {
+    public static HashMap<Integer, SteamApp> readCache() throws IOException {
         log.trace("Reading Cache");
         FileInputStream fileInputStream = new FileInputStream("cache.dat");
         try {
@@ -29,6 +29,12 @@ public class Cache {
             fileInputStream.close();
             log.info("Loaded Data from Cache.");
             return apps;
+        } catch(InvalidClassException ice) {
+            log.error("invalidated cache");
+            fileInputStream.close();
+            File f = new File("cache.dat");
+            f.delete();
+            throw new IOException(ice);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
