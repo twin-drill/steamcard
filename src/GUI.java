@@ -32,7 +32,7 @@ public class GUI extends Application {
     @Override public void start(Stage stage) throws Exception {
         log.debug("Starting GUI");
         Group group = new Group();
-        Scene scene = new Scene(group, 480, 640);
+        Scene scene = new Scene(group, 600, 800);
 
         BorderPane bp = new BorderPane();
         bp.prefWidthProperty().bind(scene.widthProperty());
@@ -113,8 +113,8 @@ public class GUI extends Application {
         histChart.setAnimated(false);
 
         Button chartButton = new Button("display");
-        ChoiceBox<String> attrChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Number of Cards", "Booster Price", "Three Card Price", "Three Card Ratio",
-                "Gem Price", "Gem Ratio", "Card Price", "Foil Card Price"));
+        ChoiceBox<String> attrChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Number of Cards", "Booster Price", "3 Card Price", "3 Card Ratio",
+                "Gem Price", "Gem Ratio", "5 Card Price", "5 Foil Card Price"));
 
         HBox chartHeader = new HBox(attrChoiceBox, chartButton);
         bot.setTop(chartHeader);
@@ -216,7 +216,7 @@ public class GUI extends Application {
                 series.getData().add(new XYChart.Data(point[1], point[0]));
             }
             histChart.getData().add(series);
-            histChart.setTitle(t + " update history (" + selected.id + ")");
+            histChart.setTitle(t + " update history (" + selected.name + ")");
         });
 
 
