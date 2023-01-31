@@ -111,6 +111,7 @@ public class GUI extends Application {
         X.setLabel("time");
         final LineChart histChart = new LineChart(X, Y);
         histChart.setAnimated(false);
+        histChart.setLegendVisible(false);
 
         Button chartButton = new Button("display");
         ChoiceBox<String> attrChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Number of Cards", "Booster Price", "Three Card Price", "Three Card Ratio",
@@ -216,7 +217,7 @@ public class GUI extends Application {
                 series.getData().add(new XYChart.Data(point[1], point[0]));
             }
             histChart.getData().add(series);
-            histChart.setTitle(t + " update history (" + selected.id + ")");
+            histChart.setTitle(t + " local update history (" + selected.id + ")");
         });
 
 
